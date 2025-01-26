@@ -1,32 +1,46 @@
 use std::env;
+use std::process::Command;
 
-use std::thread;
-use std::time::Duration;
+use tao::{
+    event::Event,
+    event_loop::{ControlFlow, EventLoop}
+};
 
-fn windows(file_path: String) {
-    println!("Windows machine detected\n");
-    println!("file path: {}", file_path);
-    thread::sleep(Duration::new(10, 0));
+fn get_file_path_windows() -> String {
+    let arguments: Vec<String> = env::args().collect();
+    return arguments[1].clone();
 }
 
-fn macos(file_path: String) {
-    println!("MacOS machine detected\n");
-    println!("file path: {}", file_path);
-    thread::sleep(Duration::new(10, 0));
+fn get_file_path_macos() -> Vec<String> {
+    let mut result = Vec::new();
+    let event_loop = EventLoop::new();
+    event_loop.run(move |event, _, control_flow| {
+        *control_flow = ControlFlow::Wait;
+        if let Event::Opened { urls } = event {
+            result.extend(urls.iter().map(|url| url.to_string()));
+            *control_flow = ControlFlow::Exit;
+        }
+    });
+}
+
+fn windows(file_path: String) {
+}
+
+fn macos(file_path: &String) {
 }
 
 fn main() {
     let platform = env::consts::OS;
-    let arguments: Vec<String> = env::args().collect();
 
-    if arguments.len() >= 2 {
-        let file_path = arguments[1].clone();
-
-        if platform == "windows" {
-            windows(file_path);
+    if platform == "windows" {
+        windows(get_file_path_windows());
+    }
+    else if platform == "macos" {
+        for i in get_file_path_macos().iter() {
+            macos(i);
         }
-        else if platform == "macos" {
-            macos(file_path);
-        }
+    }
+    else {
+        return;
     }
 }

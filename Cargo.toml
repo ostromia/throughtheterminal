@@ -3,4 +3,9 @@ name = "throughtheterminal"
 version = "0.1.0"
 edition = "2021"
 
+[package.metadata.bundle]
+name = "throughtheterminal"
+identifier = "com.ostromia.throughtheterminal"
+
 [dependencies]
+tao = "0.31.1"
