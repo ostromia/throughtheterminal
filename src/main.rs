@@ -1,20 +1,54 @@
 use std::env;
+use std::process::Command;
 
-mod windows;
-mod macos;
+use url::Url;
+
+use tao::{event::Event, event_loop::{ControlFlow, EventLoop}};
+
+fn url2posix(url: Url) -> String {
+    if let Ok(path) = url.to_file_path() {
+        path.to_string_lossy().to_string()
+    } else {
+        String::new()
+    }
+}
+
+fn windows(file_path: String) {
+}
+
+fn macos(file_path: String) {
+    let _ = Command::new("osascript")
+        .arg("-e")
+        .arg(format!(
+            r#"
+            tell application "Terminal"
+                activate
+                do script "nvim \"{}\""
+            end tell
+            "#,
+        file_path
+        ))
+        .output();
+}
 
 fn main() {
     let platform = env::consts::OS;
 
-    if platform == "windows" {
-        windows::windows(&windows::get_file_path_windows());
-    }
-    else if platform == "macos" {
-        for i in macos::get_file_path_macos().iter() {
-            macos::macos(i);
+    let event_loop = EventLoop::new();
+    event_loop.run(move |event, _, control_flow| {
+        *control_flow = ControlFlow::Wait;
+        if let Event::Opened { urls } = event {
+
+            for url in urls {
+                if platform == "windows" {
+
+                }
+                else if platform == "macos" {
+                    macos(url2posix(url));
+                }
+            }
+
+            *control_flow = ControlFlow::Exit;
         }
-    }
-    else {
-        return;
-    }
+    });
 }
