@@ -6,7 +6,7 @@ fn windows_terminal(editor: &String, file_path: &String) {
         .output();
 }
 
-pub fn windows(terminal: &String, editor: &String, file_path: String) {
+pub fn windows(terminal: &String, editor: &String, method: &String, file_path: String) {
     if terminal == "Windows Terminal" {
         windows_terminal(editor, &file_path);
     }

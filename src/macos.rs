@@ -16,7 +16,7 @@ fn terminalapp(editor: &String, file_path: &String) {
         .output();
 }
 
-pub fn macos(terminal: &String, editor: &String, file_path: String) {
+pub fn macos(terminal: &String, editor: &String, method: &String, file_path: String) {
     if terminal == "Terminal" {
         terminalapp(editor, &file_path);
     }
