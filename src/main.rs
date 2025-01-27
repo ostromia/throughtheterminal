@@ -1,8 +1,10 @@
 use std::env;
-use std::process::Command;
 
 use url::Url;
 use tao::{event::Event, event_loop::{ControlFlow, EventLoop}};
+
+mod windows;
+mod macos;
 
 fn url2posix(url: Url) -> String {
     if let Ok(path) = url.to_file_path() {
@@ -13,33 +15,12 @@ fn url2posix(url: Url) -> String {
     }
 }
 
-fn windows(file_path: String) {
-    let _ = Command::new("wt")
-        .args(["--window", "0", "new-tab", "nvim", &file_path])
-        .output();
-}
-
-fn macos(file_path: String) {
-    let _ = Command::new("osascript")
-        .arg("-e")
-        .arg(format!(
-            r#"
-            tell application "Terminal"
-                activate
-                do script "nvim \"{}\""
-            end tell
-            "#,
-        file_path
-        ))
-        .output();
-}
-
 fn main() {
     let platform = env::consts::OS;
 
     if platform == "windows" {
         let arguments: Vec<String> = env::args().collect();
-        windows(arguments[1].clone());
+        windows::windows(arguments[1].clone());
     }
 
     else if platform == "macos" {
@@ -53,7 +34,7 @@ fn main() {
 
                     }
                     else if platform == "macos" {
-                        macos(url2posix(url));
+                        macos::macos(url2posix(url));
                     }
                 }
 
