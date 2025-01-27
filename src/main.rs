@@ -50,11 +50,17 @@ fn main() {
         .expect("editor doesn't exist in .throughtheterminal")
         .to_string();
 
+    let method = config.get("method")
+        .and_then(toml::Value::as_str)
+        .expect("method doesn't exist in .throughtheterminal")
+        .to_string();
+
     if platform == "windows" {
         let arguments: Vec<String> = env::args().collect();
         windows::windows(
             &terminal,
             &editor,
+            &method,
             arguments[1].clone()
         );
     }
@@ -73,6 +79,7 @@ fn main() {
                         macos::macos(
                             &terminal,
                             &editor,
+                            &method,
                             url2posix(url)
                         );
                     }
