@@ -2,20 +2,21 @@ use std::env;
 use std::process::Command;
 
 use url::Url;
-
 use tao::{event::Event, event_loop::{ControlFlow, EventLoop}};
 
 fn url2posix(url: Url) -> String {
     if let Ok(path) = url.to_file_path() {
         path.to_string_lossy().to_string()
-    } else {
+    }
+    else {
         String::new()
     }
 }
 
 fn windows(file_path: String) {
-    Command::new("wt")
-        .args(["--window", "0", "new-tab", "nvim", &file_path]);
+    let _ = Command::new("wt")
+        .args(["--window", "0", "new-tab", "nvim", &file_path])
+        .output();
 }
 
 fn macos(file_path: String) {
