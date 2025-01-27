@@ -9,4 +9,5 @@ identifier = "com.ostromia.throughtheterminal"
 
 [dependencies]
 tao = "0.31.1"
+toml = "0.8.19"
 url = "2.5.4"

@@ -1,2 +1,4 @@
-pub fn macos(file_path: String) {
+use std::process::Command;
+
+pub fn macos(terminal: &String, editor: &String, file_path: String) {
 }
