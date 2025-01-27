@@ -14,6 +14,8 @@ fn url2posix(url: Url) -> String {
 }
 
 fn windows(file_path: String) {
+    Command::new("wt")
+        .args(["--window", "0", "new-tab", "nvim", &file_path]);
 }
 
 fn macos(file_path: String) {
@@ -34,21 +36,28 @@ fn macos(file_path: String) {
 fn main() {
     let platform = env::consts::OS;
 
-    let event_loop = EventLoop::new();
-    event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
-        if let Event::Opened { urls } = event {
+    if platform == "windows" {
+        let arguments: Vec<String> = env::args().collect();
+        windows(arguments[1].clone());
+    }
 
-            for url in urls {
-                if platform == "windows" {
+    else if platform == "macos" {
+        let event_loop = EventLoop::new();
+        event_loop.run(move |event, _, control_flow| {
+            *control_flow = ControlFlow::Wait;
+            if let Event::Opened { urls } = event {
 
+                for url in urls {
+                    if platform == "windows" {
+
+                    }
+                    else if platform == "macos" {
+                        macos(url2posix(url));
+                    }
                 }
-                else if platform == "macos" {
-                    macos(url2posix(url));
-                }
+
+                *control_flow = ControlFlow::Exit;
             }
-
-            *control_flow = ControlFlow::Exit;
-        }
-    });
+        });
+    }
 }
