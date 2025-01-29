@@ -35,34 +35,68 @@ fn terminalapp(editor: &String, method: &String, file_path: &String) {
 }
 
 fn wezterm(editor: &String, method: &String, file_path: &String) {
-    let applescript = format!(r#"
-        set isWeztermRunning to false
+    let applescript: String;
 
-        if application "WezTerm" is running then
-            set isWeztermRunning to true
-        end if
+    if method == "tab" {
+        applescript = format!(r#"
+            set isWeztermRunning to false
 
-        tell application "WezTerm"
-            activate
-        end tell
+            if application "WezTerm" is running then
+                set isWeztermRunning to true
+            end if
 
-        if isWeztermRunning then
-            tell application "System Events"
-                click menu bar item 3 of menu bar 1 of application process "WezTerm"
-                click menu item 1 of menu 1 of menu bar item 3 of menu bar 1 of application process "WezTerm"
+            tell application "WezTerm"
+                activate
             end tell
-        end if
 
-        delay 0.1
+            if isWeztermRunning then
+                tell application "System Events"
+                    click menu bar item 3 of menu bar 1 of application process "WezTerm"
+                    click menu item 1 of menu 1 of menu bar item 3 of menu bar 1 of application process "WezTerm"
+                end tell
+            end if
 
-        tell application "System Events"
-            keystroke "{} \"{}\""
-            key code 36
-        end tell
-        "#,
-        editor,
-        file_path
-    );
+            delay 0.1
+
+            tell application "System Events"
+                keystroke "{} \"{}\""
+                key code 36
+            end tell
+            "#,
+            editor,
+            file_path
+        );
+    }
+    else {
+        applescript = format!(r#"
+            set isWeztermRunning to false
+
+            if application "WezTerm" is running then
+                set isWeztermRunning to true
+            end if
+
+            tell application "WezTerm"
+                activate
+            end tell
+
+            if isWeztermRunning then
+                tell application "System Events"
+                    click menu bar item 3 of menu bar 1 of application process "WezTerm"
+                    click menu item 2 of menu 1 of menu bar item 3 of menu bar 1 of application process "WezTerm"
+                end tell
+            end if
+
+            delay 0.5
+
+            tell application "System Events"
+                keystroke "{} \"{}\""
+                key code 36
+            end tell
+            "#,
+            editor,
+            file_path
+        );
+    }
 
     let _ = Command::new("osascript")
         .arg("-e")
