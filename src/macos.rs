@@ -34,8 +34,35 @@ fn terminalapp(editor: &String, method: &String, file_path: &String) {
         .output();
 }
 
+fn wezterm(editor: &String, method: &String, file_path: &String) {
+    let applescript = format!(r#"
+        tell application "WezTerm"
+            activate
+        end tell
+
+        tell application "System Events"
+            click menu bar item 3 of menu bar 1 of application process "WezTerm"
+            click menu item 1 of menu 1 of menu bar item 3 of menu bar 1 of application process "WezTerm"
+            delay 0.1
+            keystroke "{} \"{}\""
+            key code 36
+        end tell
+        "#,
+        editor,
+        file_path
+    );
+
+    let _ = Command::new("osascript")
+        .arg("-e")
+        .arg(applescript)
+        .output();
+}
+
 pub fn macos(terminal: &String, editor: &String, method: &String, file_path: String) {
     if terminal == "Terminal" {
         terminalapp(editor, method, &file_path);
+    }
+    else if terminal == "WezTerm" {
+        wezterm(editor, method, &file_path);
     }
 }
