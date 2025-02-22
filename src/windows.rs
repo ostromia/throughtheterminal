@@ -87,13 +87,26 @@ fn wezterm(editor: &String, method: &String, file_path: &String) {
         let _ = EnumWindows(Some(enum_windows_callback), LPARAM(&mut processes as *mut _ as isize));
     }
 
-    for process in &processes {
-        println!(
-            "PID: {}, HWND: {:?}, Title: {}, Module: {}",
-            process.pid, process.hwnd, process.window_title, process.module_file_name
+    if method == "tab" {
+        let command = format!(
+            r#"
+                $env:WEZTERM_UNIX_SOCKET = "$HOME/.local/share/wezterm/gui-sock-$((Get-Process wezterm-gui).Id)";
+                wezterm cli spawn;
+                start-sleep -milliseconds 1000;
+                wezterm cli send-text "{} {}`n" --pane-id (wezterm cli list --format json | ConvertFrom-Json)[-1].pane_id;
+            "#,
+            editor,
+            file_path
         );
+
+        let _ = Command::new("powershell")
+            .arg(command)
+            .output();
     }
 
+    unsafe {
+        _ = SetForegroundWindow(processes[0].hwnd);
+    }
 }
 
 pub fn windows(terminal: &String, editor: &String, method: &String, file_path: String) {
