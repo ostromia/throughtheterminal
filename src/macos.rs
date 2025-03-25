@@ -143,7 +143,6 @@ pub fn macos(terminal: &String, editor: &String, method: &String, file_path: Str
     if terminal == "Terminal" {
         terminalapp(editor, method, &file_path);
     }
-<<<<<<< HEAD
 
     else if terminal == "WezTerm" {
         wezterm(editor, method, &file_path);
@@ -152,9 +151,4 @@ pub fn macos(terminal: &String, editor: &String, method: &String, file_path: Str
     else if terminal == "Ghostty" {
         ghostty(editor, method, &file_path);
     }
-=======
-    else if terminal == "WezTerm" {
-        wezterm(editor, method, &file_path);
-    }
->>>>>>> 65ad94f985fe0e34ea218c90ce2d76723237e825
 }
